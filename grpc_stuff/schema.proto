@@ -2,11 +2,11 @@ syntax = "proto3";
 
 option go_package = "github.com/irateswami/cacheMeOutside/grpc_stuff";
 
-package cacheserver;
+package cache;
 
 service ServeCache {
-    rpc InsertIntoCache (InsertRequest) returns (Empty) {}
-    rpc GetFromCache (GetRequest) returns (GetResponse) {}
+    rpc Insert (InsertRequest) returns (Empty) {}
+    rpc Get (GetRequest) returns (GetResponse) {}
 }
 
 message InsertRequest {

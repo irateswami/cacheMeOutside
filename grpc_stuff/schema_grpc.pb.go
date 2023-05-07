@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServeCacheClient interface {
-	InsertIntoCache(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*Empty, error)
-	GetFromCache(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*Empty, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 }
 
 type serveCacheClient struct {
@@ -34,18 +34,18 @@ func NewServeCacheClient(cc grpc.ClientConnInterface) ServeCacheClient {
 	return &serveCacheClient{cc}
 }
 
-func (c *serveCacheClient) InsertIntoCache(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *serveCacheClient) Insert(ctx context.Context, in *InsertRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/cacheserver.ServeCache/InsertIntoCache", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Insert", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serveCacheClient) GetFromCache(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *serveCacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/cacheserver.ServeCache/GetFromCache", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +56,8 @@ func (c *serveCacheClient) GetFromCache(ctx context.Context, in *GetRequest, opt
 // All implementations must embed UnimplementedServeCacheServer
 // for forward compatibility
 type ServeCacheServer interface {
-	InsertIntoCache(context.Context, *InsertRequest) (*Empty, error)
-	GetFromCache(context.Context, *GetRequest) (*GetResponse, error)
+	Insert(context.Context, *InsertRequest) (*Empty, error)
+	Get(context.Context, *GetRequest) (*GetResponse, error)
 	mustEmbedUnimplementedServeCacheServer()
 }
 
@@ -65,11 +65,11 @@ type ServeCacheServer interface {
 type UnimplementedServeCacheServer struct {
 }
 
-func (UnimplementedServeCacheServer) InsertIntoCache(context.Context, *InsertRequest) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InsertIntoCache not implemented")
+func (UnimplementedServeCacheServer) Insert(context.Context, *InsertRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
 }
-func (UnimplementedServeCacheServer) GetFromCache(context.Context, *GetRequest) (*GetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFromCache not implemented")
+func (UnimplementedServeCacheServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedServeCacheServer) mustEmbedUnimplementedServeCacheServer() {}
 
@@ -84,38 +84,38 @@ func RegisterServeCacheServer(s grpc.ServiceRegistrar, srv ServeCacheServer) {
 	s.RegisterService(&ServeCache_ServiceDesc, srv)
 }
 
-func _ServeCache_InsertIntoCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ServeCache_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InsertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServeCacheServer).InsertIntoCache(ctx, in)
+		return srv.(ServeCacheServer).Insert(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cacheserver.ServeCache/InsertIntoCache",
+		FullMethod: "/cache.ServeCache/Insert",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServeCacheServer).InsertIntoCache(ctx, req.(*InsertRequest))
+		return srv.(ServeCacheServer).Insert(ctx, req.(*InsertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ServeCache_GetFromCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ServeCache_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServeCacheServer).GetFromCache(ctx, in)
+		return srv.(ServeCacheServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/cacheserver.ServeCache/GetFromCache",
+		FullMethod: "/cache.ServeCache/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServeCacheServer).GetFromCache(ctx, req.(*GetRequest))
+		return srv.(ServeCacheServer).Get(ctx, req.(*GetRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -124,16 +124,16 @@ func _ServeCache_GetFromCache_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ServeCache_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "cacheserver.ServeCache",
+	ServiceName: "cache.ServeCache",
 	HandlerType: (*ServeCacheServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "InsertIntoCache",
-			Handler:    _ServeCache_InsertIntoCache_Handler,
+			MethodName: "Insert",
+			Handler:    _ServeCache_Insert_Handler,
 		},
 		{
-			MethodName: "GetFromCache",
-			Handler:    _ServeCache_GetFromCache_Handler,
+			MethodName: "Get",
+			Handler:    _ServeCache_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
