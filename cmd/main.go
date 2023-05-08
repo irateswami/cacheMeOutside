@@ -17,18 +17,13 @@ const (
 )
 
 func run() error {
-	/*
-		cert, err := tls.LoadX509KeyPair("server-cert.pem", "server-key.pem")
-		if err != nil {
-			return err
-		}
+	cert, err := tls.LoadX509KeyPair("../certs/server-cert.pem", "../certs/server-key.pem")
+	if err != nil {
+		return err
+	}
 
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{cert},
-		}
-	*/
 	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{},
+		Certificates: []tls.Certificate{cert},
 	}
 
 	grpcServer := grpc.NewServer(grpc.Creds(credentials.NewTLS(tlsConfig)))

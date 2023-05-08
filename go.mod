@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/ggscllc/go-cache v0.0.0-20230508021812-30d8c138b219 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
