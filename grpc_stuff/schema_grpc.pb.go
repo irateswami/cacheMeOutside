@@ -22,8 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ServeCacheClient interface {
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*Empty, error)
+	SetDefault(ctx context.Context, in *SetDefaultRequest, opts ...grpc.CallOption) (*Empty, error)
+	Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*Empty, error)
+	Replace(ctx context.Context, in *ReplaceRequest, opts ...grpc.CallOption) (*Empty, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	GetWithExpiration(ctx context.Context, in *GetWithExpirationRequest, opts ...grpc.CallOption) (*GetWithExpirationResponse, error)
+	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Empty, error)
+	DeleteExpired(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	Items(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ItemsResponse, error)
 }
 
 type serveCacheClient struct {
@@ -32,15 +39,6 @@ type serveCacheClient struct {
 
 func NewServeCacheClient(cc grpc.ClientConnInterface) ServeCacheClient {
 	return &serveCacheClient{cc}
-}
-
-func (c *serveCacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
-	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/cache.ServeCache/Get", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *serveCacheClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*Empty, error) {
@@ -52,12 +50,91 @@ func (c *serveCacheClient) Set(ctx context.Context, in *SetRequest, opts ...grpc
 	return out, nil
 }
 
+func (c *serveCacheClient) SetDefault(ctx context.Context, in *SetDefaultRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/SetDefault", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) Add(ctx context.Context, in *AddRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) Replace(ctx context.Context, in *ReplaceRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Replace", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) GetWithExpiration(ctx context.Context, in *GetWithExpirationRequest, opts ...grpc.CallOption) (*GetWithExpirationResponse, error) {
+	out := new(GetWithExpirationResponse)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/GetWithExpiration", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) DeleteExpired(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/DeleteExpired", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serveCacheClient) Items(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ItemsResponse, error) {
+	out := new(ItemsResponse)
+	err := c.cc.Invoke(ctx, "/cache.ServeCache/Items", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServeCacheServer is the server API for ServeCache service.
 // All implementations must embed UnimplementedServeCacheServer
 // for forward compatibility
 type ServeCacheServer interface {
-	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Set(context.Context, *SetRequest) (*Empty, error)
+	SetDefault(context.Context, *SetDefaultRequest) (*Empty, error)
+	Add(context.Context, *AddRequest) (*Empty, error)
+	Replace(context.Context, *ReplaceRequest) (*Empty, error)
+	Get(context.Context, *GetRequest) (*GetResponse, error)
+	GetWithExpiration(context.Context, *GetWithExpirationRequest) (*GetWithExpirationResponse, error)
+	Delete(context.Context, *DeleteRequest) (*Empty, error)
+	DeleteExpired(context.Context, *Empty) (*Empty, error)
+	Items(context.Context, *Empty) (*ItemsResponse, error)
 	mustEmbedUnimplementedServeCacheServer()
 }
 
@@ -65,11 +142,32 @@ type ServeCacheServer interface {
 type UnimplementedServeCacheServer struct {
 }
 
+func (UnimplementedServeCacheServer) Set(context.Context, *SetRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (UnimplementedServeCacheServer) SetDefault(context.Context, *SetDefaultRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDefault not implemented")
+}
+func (UnimplementedServeCacheServer) Add(context.Context, *AddRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
+}
+func (UnimplementedServeCacheServer) Replace(context.Context, *ReplaceRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Replace not implemented")
+}
 func (UnimplementedServeCacheServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedServeCacheServer) Set(context.Context, *SetRequest) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+func (UnimplementedServeCacheServer) GetWithExpiration(context.Context, *GetWithExpirationRequest) (*GetWithExpirationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWithExpiration not implemented")
+}
+func (UnimplementedServeCacheServer) Delete(context.Context, *DeleteRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedServeCacheServer) DeleteExpired(context.Context, *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteExpired not implemented")
+}
+func (UnimplementedServeCacheServer) Items(context.Context, *Empty) (*ItemsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Items not implemented")
 }
 func (UnimplementedServeCacheServer) mustEmbedUnimplementedServeCacheServer() {}
 
@@ -82,24 +180,6 @@ type UnsafeServeCacheServer interface {
 
 func RegisterServeCacheServer(s grpc.ServiceRegistrar, srv ServeCacheServer) {
 	s.RegisterService(&ServeCache_ServiceDesc, srv)
-}
-
-func _ServeCache_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ServeCacheServer).Get(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cache.ServeCache/Get",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServeCacheServer).Get(ctx, req.(*GetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _ServeCache_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -120,6 +200,150 @@ func _ServeCache_Set_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ServeCache_SetDefault_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDefaultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).SetDefault(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/SetDefault",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).SetDefault(ctx, req.(*SetDefaultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).Add(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/Add",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).Add(ctx, req.(*AddRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_Replace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).Replace(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/Replace",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).Replace(ctx, req.(*ReplaceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_GetWithExpiration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWithExpirationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).GetWithExpiration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/GetWithExpiration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).GetWithExpiration(ctx, req.(*GetWithExpirationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).Delete(ctx, req.(*DeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_DeleteExpired_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).DeleteExpired(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/DeleteExpired",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).DeleteExpired(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ServeCache_Items_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServeCacheServer).Items(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cache.ServeCache/Items",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServeCacheServer).Items(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ServeCache_ServiceDesc is the grpc.ServiceDesc for ServeCache service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -128,12 +352,40 @@ var ServeCache_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ServeCacheServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "Set",
+			Handler:    _ServeCache_Set_Handler,
+		},
+		{
+			MethodName: "SetDefault",
+			Handler:    _ServeCache_SetDefault_Handler,
+		},
+		{
+			MethodName: "Add",
+			Handler:    _ServeCache_Add_Handler,
+		},
+		{
+			MethodName: "Replace",
+			Handler:    _ServeCache_Replace_Handler,
+		},
+		{
 			MethodName: "Get",
 			Handler:    _ServeCache_Get_Handler,
 		},
 		{
-			MethodName: "Set",
-			Handler:    _ServeCache_Set_Handler,
+			MethodName: "GetWithExpiration",
+			Handler:    _ServeCache_GetWithExpiration_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _ServeCache_Delete_Handler,
+		},
+		{
+			MethodName: "DeleteExpired",
+			Handler:    _ServeCache_DeleteExpired_Handler,
+		},
+		{
+			MethodName: "Items",
+			Handler:    _ServeCache_Items_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

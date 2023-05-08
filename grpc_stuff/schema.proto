@@ -7,8 +7,15 @@ import "google/protobuf/timestamp.proto";
 package cache;
 
 service ServeCache {
-    rpc Get (GetRequest) returns (GetResponse) {}
     rpc Set (SetRequest) returns (Empty) {}
+    rpc SetDefault (SetDefaultRequest) returns (Empty) {}
+    rpc Add(AddRequest) returns (Empty) {}
+    rpc Replace(ReplaceRequest) returns (Empty) {}
+    rpc Get (GetRequest) returns (GetResponse) {}
+    rpc GetWithExpiration(GetWithExpirationRequest) returns (GetWithExpirationResponse) {}
+    rpc Delete (DeleteRequest) returns (Empty) {}
+    rpc DeleteExpired (Empty) returns (Empty) {}
+    rpc Items (Empty) returns (ItemsResponse) {}
 }
 
 message SetRequest {
@@ -58,6 +65,10 @@ message DeleteRequest {
 }
 
 message ItemsResponse {
+    repeated Item items = 1;
+}
+
+message Item {
     string key = 1;
     string value = 2;
 }

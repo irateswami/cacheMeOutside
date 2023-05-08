@@ -11,38 +11,46 @@ var (
 type Server struct {
 }
 
+func (s *Server) Set(ctx context.Context, insertRequest *SetRequest) (*Empty, error) {
+	return &Empty{}, nil
+}
+
+func (s *Server) SetDefault(ctx context.Context, setDefaultRequest *SetDefaultRequest) (*Empty, error) {
+	return &Empty{}, nil
+}
+
+func (s *Server) Add(ctx context.Context, addRequest *AddRequest) (*Empty, error) {
+	return &Empty{}, nil
+}
+
+func (s *Server) Replace(ctx context.Context, replaceRequest *ReplaceRequest) (*Empty, error) {
+	return &Empty{}, nil
+}
+
 func (s *Server) Get(ctx context.Context, getRequest *GetRequest) (*GetResponse, error) {
 	return &GetResponse{}, nil
 }
 
-func (s *Server) Set(ctx context.Context, insertRequest *InsertRequest) (*Empty, error) {
+func (s *Server) GetWithExpiration(ctx context.Context, getWithExpirationRequest *GetWithExpirationRequest) (*GetWithExpirationResponse, error) {
+	return &GetWithExpirationResponse{}, nil
+}
+
+func (s *Server) Delete(ctx context.Context, deleteRequest *DeleteRequest) (*Empty, error) {
 	return &Empty{}, nil
 }
 
-/**
-func (c *cache) Set(k string, x []byte, d time.Duration) {
-func (c *cache) SetDefault(k string, x []byte) {
-func (c *cache) Add(k string, x []byte, d time.Duration) error {
-func (c *cache) Replace(k string, x []byte, d time.Duration) error {
-func (c *cache) Get(k string) ([]byte, bool) {
-func (c *cache) GetWithExpiration(k string) ([]byte, time.Time, bool) {
-func (c *cache) Delete(k string) {
-func (c *cache) DeleteExpired() {
-func (c *cache) Items() map[string]Item {
-func (c *cache) ItemCount() int {
-func (c *cache) Flush() {
+func (s *Server) DeleteExpired(ctx context.Context, _ *Empty) (*Empty, error) {
+	return &Empty{}, nil
+}
 
-SetDefault
-Add
-Replace
-Get
-GetWithExpiration
-Delete
-DeleteExpired
-OnEvicted
-Items
-ItemCount
-Flush
-*/
+func (s *Server) Items(ctx context.Context, _ *Empty) (*ItemsResponse, error) {
+	return &ItemsResponse{}, nil
+}
 
+func (s *Server) ItemCount(ctx context.Context) {
+}
+
+func (s *Server) Flush() {}
+
+// stub
 func (s *Server) mustEmbedUnimplementedServeCacheServer() {}
